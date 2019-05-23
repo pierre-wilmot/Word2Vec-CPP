@@ -31,18 +31,12 @@ namespace meta {
 
 template <bool C, typename R = void>
 using EnableIf = typename std::enable_if<C, R>::type;
-  
-template <typename T, typename OperationType>
-constexpr bool IsTrainable = std::is_base_of<fetch::ml::ops::Trainable<T>, OperationType>::value;
-
-template <typename T, typename OperationType>
-constexpr bool IsNotTrainable = !IsTrainable<T, OperationType>;
 
 template <typename T, typename OperationType, typename R = void>
-using IfIsTrainable = fetch::ml::meta::EnableIf<IsTrainable<T, OperationType>, R>;
+using IfIsTrainable = fetch::ml::meta::EnableIf<std::is_base_of<fetch::ml::ops::Trainable<T>, OperationType>::value, R>;
 
 template <typename T, typename OperationType, typename R = void>
-using IfIsNotTrainable = fetch::ml::meta::EnableIf<IsNotTrainable<T, OperationType>, R>;
+using IfIsNotTrainable = fetch::ml::meta::EnableIf<!std::is_base_of<fetch::ml::ops::Trainable<T>, OperationType>::value, R>;
 
 }  // namespace meta
 }  // namespace ml
