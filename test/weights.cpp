@@ -83,11 +83,11 @@ TYPED_TEST(WeightsTest, loadStateDict)
 {
   using ArrayType = fetch::math::Tensor<TypeParam, 2>;
 
-  fetch::ml::ops::Weights<TypeParam> w;
+  fetch::ml::ops::Weights<ArrayType, 2> w;
 
-  std::shared_ptr<TypeParam>      data = std::make_shared<TypeParam>({1, 8});
-  fetch::ml::StateDict<TypeParam> sd;
+  std::shared_ptr<ArrayType>      data = std::make_shared<ArrayType>(std::array<typename ArrayType::SizeType, 2>({1, 8}));
+  fetch::ml::StateDict<ArrayType> sd;
   sd.weights_ = data;
   w.LoadStateDict(sd);
-  EXPECT_EQ(w.Forward({}), *data);
+  EXPECT_EQ((w.fetch::ml::template Ops<ArrayType, 2>::Forward({})).Storage(), data->Storage());
 }
