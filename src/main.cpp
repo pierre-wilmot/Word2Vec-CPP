@@ -30,7 +30,7 @@ void saveVectors(std::string const &output_file,
 		 fetch::math::Tensor<float, 2> const &matrix,
 		 std::map<std::string, std::pair<uint64_t, uint64_t>> const &vocab)
 {
-  auto myfile = std::fstream(output_file, std::ios::out | std::ios::binary);
+  std::fstream myfile(output_file, std::ios::out | std::ios::binary);
   myfile << vocab.size() << " " << matrix.shape()[1] << "\n";
   for (auto kvp : vocab)
     {
@@ -40,7 +40,6 @@ void saveVectors(std::string const &output_file,
       myfile << "\n";
     }
   myfile.close();
-
 }
 
 int main(int ac, char **av)
