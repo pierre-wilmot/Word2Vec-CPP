@@ -27,7 +27,7 @@ namespace ml {
 /*
  * Abstract Ops interface
  */
-  template <class T, std::uint64_t OUTPUT_RANK>
+template <class T, std::uint64_t OUTPUT_RANK>
 class Ops
 {
 public:

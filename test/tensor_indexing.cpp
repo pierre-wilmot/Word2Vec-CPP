@@ -1,0 +1,563 @@
+//------------------------------------------------------------------------------
+//
+//   Copyright 2018-2019 Fetch.AI Limited
+//
+//   Licensed under the Apache License, Version 2.0 (the "License");
+//   you may not use this file except in compliance with the License.
+//   You may obtain a copy of the License at
+//
+//       http://www.apache.org/licenses/LICENSE-2.0
+//
+//   Unless required by applicable law or agreed to in writing, software
+//   distributed under the License is distributed on an "AS IS" BASIS,
+//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//   See the License for the specific language governing permissions and
+//   limitations under the License.
+//
+//------------------------------------------------------------------------------
+
+#include "tensor.hpp"
+#include <gtest/gtest.h>
+
+template <typename T>
+class TensorIndexingTest : public ::testing::Test
+{
+};
+
+using MyTypes = ::testing::Types<int, unsigned int, long, unsigned long, float, double>;
+TYPED_TEST_CASE(TensorIndexingTest, MyTypes);
+
+TYPED_TEST(TensorIndexingTest, one_dimentional_tensor_test)
+{
+  fetch::math::Tensor<TypeParam, 1> t({5});
+
+  ASSERT_EQ(t.Size(), 5);
+  ASSERT_EQ(t.Capacity(), 8);
+
+  ASSERT_EQ(t.template OffsetForIndices<0>(0), 0);
+  ASSERT_EQ(t.template OffsetForIndices<0>(1), 1);
+  ASSERT_EQ(t.template OffsetForIndices<0>(2), 2);
+  ASSERT_EQ(t.template OffsetForIndices<0>(3), 3);
+  ASSERT_EQ(t.template OffsetForIndices<0>(4), 4);
+
+  ASSERT_EQ(t.DimensionSize(0), 1);
+  ASSERT_EQ(t.DimensionSize(1), 0);
+  ASSERT_EQ(t.DimensionSize(2), 0);
+  ASSERT_EQ(t.DimensionSize(3), 0);
+}
+
+TYPED_TEST(TensorIndexingTest, one_dimentional_tensor_with_stride_test)
+{
+  fetch::math::Tensor<TypeParam, 1> t({5}, {2});
+
+  ASSERT_EQ(t.Size(), 5);
+  ASSERT_EQ(t.Capacity(), 16);
+
+  ASSERT_EQ(t.template OffsetForIndices<0>(0), 0);
+  ASSERT_EQ(t.template OffsetForIndices<0>(1), 2);
+  ASSERT_EQ(t.template OffsetForIndices<0>(2), 4);
+  ASSERT_EQ(t.template OffsetForIndices<0>(3), 6);
+  ASSERT_EQ(t.template OffsetForIndices<0>(4), 8);
+
+  ASSERT_EQ(t.DimensionSize(0), 2);
+  ASSERT_EQ(t.DimensionSize(1), 0);
+  ASSERT_EQ(t.DimensionSize(2), 0);
+  ASSERT_EQ(t.DimensionSize(3), 0);
+}
+
+TYPED_TEST(TensorIndexingTest, two_dimentional_tensor_test)
+{
+  fetch::math::Tensor<TypeParam, 2> t({3, 5});
+
+  ASSERT_EQ(t.Size(), 15);
+  ASSERT_EQ(t.Capacity(), 24);
+
+  ASSERT_EQ(t.template OffsetForIndices<0>(0, 0), 0);
+  ASSERT_EQ(t.template OffsetForIndices<0>(0, 1), 1);
+  ASSERT_EQ(t.template OffsetForIndices<0>(0, 2), 2);
+  ASSERT_EQ(t.template OffsetForIndices<0>(0, 3), 3);
+  ASSERT_EQ(t.template OffsetForIndices<0>(0, 4), 4);
+
+  ASSERT_EQ(t.template OffsetForIndices<0>(1, 0), 8);
+  ASSERT_EQ(t.template OffsetForIndices<0>(1, 1), 9);
+  ASSERT_EQ(t.template OffsetForIndices<0>(1, 2), 10);
+  ASSERT_EQ(t.template OffsetForIndices<0>(1, 3), 11);
+  ASSERT_EQ(t.template OffsetForIndices<0>(1, 4), 12);
+
+  ASSERT_EQ(t.template OffsetForIndices<0>(2, 0), 16);
+  ASSERT_EQ(t.template OffsetForIndices<0>(2, 1), 17);
+  ASSERT_EQ(t.template OffsetForIndices<0>(2, 2), 18);
+  ASSERT_EQ(t.template OffsetForIndices<0>(2, 3), 19);
+  ASSERT_EQ(t.template OffsetForIndices<0>(2, 4), 20);
+
+  ASSERT_EQ(t.DimensionSize(0), 8);
+  ASSERT_EQ(t.DimensionSize(1), 1);
+  ASSERT_EQ(t.DimensionSize(2), 0);
+  ASSERT_EQ(t.DimensionSize(3), 0);
+}
+
+TYPED_TEST(TensorIndexingTest, two_dimentional_tensor_with_stride_test)
+{
+  fetch::math::Tensor<TypeParam, 2> t({3, 5}, {2, 3});
+
+  ASSERT_EQ(t.Size(), 15);
+  ASSERT_EQ(t.Capacity(), 96);
+
+  ASSERT_EQ(t.template OffsetForIndices<0>(0, 0), 0);
+  ASSERT_EQ(t.template OffsetForIndices<0>(0, 1), 3);
+  ASSERT_EQ(t.template OffsetForIndices<0>(0, 2), 6);
+  ASSERT_EQ(t.template OffsetForIndices<0>(0, 3), 9);
+  ASSERT_EQ(t.template OffsetForIndices<0>(0, 4), 12);
+
+  ASSERT_EQ(t.template OffsetForIndices<0>(1, 0), 32);
+  ASSERT_EQ(t.template OffsetForIndices<0>(1, 1), 35);
+  ASSERT_EQ(t.template OffsetForIndices<0>(1, 2), 38);
+  ASSERT_EQ(t.template OffsetForIndices<0>(1, 3), 41);
+  ASSERT_EQ(t.template OffsetForIndices<0>(1, 4), 44);
+
+  ASSERT_EQ(t.template OffsetForIndices<0>(2, 0), 64);
+  ASSERT_EQ(t.template OffsetForIndices<0>(2, 1), 67);
+  ASSERT_EQ(t.template OffsetForIndices<0>(2, 2), 70);
+  ASSERT_EQ(t.template OffsetForIndices<0>(2, 3), 73);
+  ASSERT_EQ(t.template OffsetForIndices<0>(2, 4), 76);
+
+  ASSERT_EQ(t.DimensionSize(0), 32);
+  ASSERT_EQ(t.DimensionSize(1), 3);
+  ASSERT_EQ(t.DimensionSize(2), 0);
+  ASSERT_EQ(t.DimensionSize(3), 0);
+}
+
+TYPED_TEST(TensorIndexingTest, three_dimentional_tensor_test)
+{
+  fetch::math::Tensor<TypeParam, 3> t({2, 3, 5});
+
+  ASSERT_EQ(t.Size(), 30);
+  ASSERT_EQ(t.Capacity(), 48);
+
+  ASSERT_EQ(t.template OffsetForIndices<0>(0, 0, 0), 0);
+  ASSERT_EQ(t.template OffsetForIndices<0>(0, 0, 1), 1);
+  ASSERT_EQ(t.template OffsetForIndices<0>(0, 0, 2), 2);
+  ASSERT_EQ(t.template OffsetForIndices<0>(0, 0, 3), 3);
+  ASSERT_EQ(t.template OffsetForIndices<0>(0, 0, 4), 4);
+
+  ASSERT_EQ(t.template OffsetForIndices<0>(0, 1, 0), 8);
+  ASSERT_EQ(t.template OffsetForIndices<0>(0, 1, 1), 9);
+  ASSERT_EQ(t.template OffsetForIndices<0>(0, 1, 2), 10);
+  ASSERT_EQ(t.template OffsetForIndices<0>(0, 1, 3), 11);
+  ASSERT_EQ(t.template OffsetForIndices<0>(0, 1, 4), 12);
+
+  ASSERT_EQ(t.template OffsetForIndices<0>(0, 2, 0), 16);
+  ASSERT_EQ(t.template OffsetForIndices<0>(0, 2, 1), 17);
+  ASSERT_EQ(t.template OffsetForIndices<0>(0, 2, 2), 18);
+  ASSERT_EQ(t.template OffsetForIndices<0>(0, 2, 3), 19);
+  ASSERT_EQ(t.template OffsetForIndices<0>(0, 2, 4), 20);
+
+  ASSERT_EQ(t.template OffsetForIndices<0>(1, 0, 0), 24);
+  ASSERT_EQ(t.template OffsetForIndices<0>(1, 0, 1), 25);
+  ASSERT_EQ(t.template OffsetForIndices<0>(1, 0, 2), 26);
+  ASSERT_EQ(t.template OffsetForIndices<0>(1, 0, 3), 27);
+  ASSERT_EQ(t.template OffsetForIndices<0>(1, 0, 4), 28);
+
+  ASSERT_EQ(t.template OffsetForIndices<0>(1, 1, 0), 32);
+  ASSERT_EQ(t.template OffsetForIndices<0>(1, 1, 1), 33);
+  ASSERT_EQ(t.template OffsetForIndices<0>(1, 1, 2), 34);
+  ASSERT_EQ(t.template OffsetForIndices<0>(1, 1, 3), 35);
+  ASSERT_EQ(t.template OffsetForIndices<0>(1, 1, 4), 36);
+
+  ASSERT_EQ(t.template OffsetForIndices<0>(1, 2, 0), 40);
+  ASSERT_EQ(t.template OffsetForIndices<0>(1, 2, 1), 41);
+  ASSERT_EQ(t.template OffsetForIndices<0>(1, 2, 2), 42);
+  ASSERT_EQ(t.template OffsetForIndices<0>(1, 2, 3), 43);
+  ASSERT_EQ(t.template OffsetForIndices<0>(1, 2, 4), 44);
+
+
+  ASSERT_EQ(t.DimensionSize(0), 24);
+  ASSERT_EQ(t.DimensionSize(1), 8);
+  ASSERT_EQ(t.DimensionSize(2), 1);
+  ASSERT_EQ(t.DimensionSize(3), 0);
+
+  TypeParam s(0);
+  for (std::uint64_t i(0); i < 2; i++)
+  {
+    for (std::uint64_t j(0); j < 3; j++)
+    {
+      for (std::uint64_t k(0); k < 5; k++)
+      {
+        t.Set(i, j, k, s);
+        ASSERT_EQ(t.Get(i, j, k), s);
+        s++;
+      }
+    }
+  }
+
+  std::vector<TypeParam> gt({0,  1,  2,  3,  4,  0, 0, 0, 5,  6,  7,  8,  9,  0, 0, 0,
+                             10, 11, 12, 13, 14, 0, 0, 0, 15, 16, 17, 18, 19, 0, 0, 0,
+                             20, 21, 22, 23, 24, 0, 0, 0, 25, 26, 27, 28, 29, 0, 0, 0});
+  for (std::size_t i(0) ; i < gt.size() ; ++i)
+    {
+      ASSERT_EQ((t.Storage().get())[i], gt[i]);
+    }
+}
+
+/*
+ * Cool trick playing with stride.
+ * If you need an array that will store the same value for all elements,
+ * Set the strides to zeroes and all element will point to the same memory offset
+ * You can now store an arbitrary large tensor in an underlying storage of size 1
+ * Will be useful for broadcasting
+ */
+TYPED_TEST(TensorIndexingTest, zero_stride_tensor_test)
+{
+  fetch::math::Tensor<TypeParam, 3> t({2, 3, 5}, {0, 0, 0}, {0, 0, 0});
+
+  ASSERT_EQ(t.Size(), 30);
+  ASSERT_EQ(t.Capacity(), 1);
+
+  for (std::uint64_t x(0); x < 2; ++x)
+    {
+      for (std::uint64_t y(0); y < 3; ++y)
+	{
+	  for (std::uint64_t z(0); z < 2; ++z)
+	    {	      
+	      ASSERT_EQ(t.template OffsetForIndices<0>(x, y, z), 0);
+	      ASSERT_EQ(t.Get(x, y, z), 0);
+	    }
+	}
+    }
+
+  t.Set(1, 1, 1, TypeParam(42));  // Setting single element
+  for (std::uint64_t i(0); i < 2; i++)
+  {
+    for (std::uint64_t j(0); j < 3; j++)
+    {
+      for (std::uint64_t k(0); k < 5; k++)
+      {
+        // All element are now that value since they all point at the same memory offset
+        ASSERT_EQ(t.Get(i, j, k), TypeParam(42));
+      }
+    }
+  }
+}
+
+TYPED_TEST(TensorIndexingTest, two_dimentional_tensor_slicing_test)
+{
+  fetch::math::Tensor<TypeParam, 2> t({3, 5});
+  for (std::uint64_t i(0); i < 3; ++i)
+  {
+    for (std::uint64_t j(0); j < 5; ++j)
+    {
+      t.Set(i, j, TypeParam(i));
+    }
+  }
+  fetch::math::Tensor<TypeParam, 1> t0 = t.Slice(0);
+  fetch::math::Tensor<TypeParam, 1> t1 = t.Slice(1);
+  fetch::math::Tensor<TypeParam, 1> t2 = t.Slice(2);
+
+  std::array<std::uint64_t, 1> expectedSliceSize = {5ul};
+  EXPECT_EQ(t0.shape(), expectedSliceSize);
+  EXPECT_EQ(t1.shape(), expectedSliceSize);
+  EXPECT_EQ(t2.shape(), expectedSliceSize);
+  EXPECT_EQ(t.Storage().use_count(), 5);  // t, t0, t1, t2, temporary return
+
+
+  for (std::uint64_t j(0); j < 5; ++j)
+  {
+    EXPECT_EQ(t0.Get(j), TypeParam(0));
+    t0.Set(j, TypeParam(77 + j));
+    EXPECT_EQ(t1.Get(j), TypeParam(1));
+    t1.Set(j, TypeParam(88 + j));
+    EXPECT_EQ(t2.Get(j), TypeParam(2));
+    t2.Set(j, TypeParam(99 + j));
+  }
+
+  EXPECT_EQ(t.Get(0, 0), TypeParam(77));
+  EXPECT_EQ(t.Get(0, 1), TypeParam(78));
+  EXPECT_EQ(t.Get(0, 2), TypeParam(79));
+  EXPECT_EQ(t.Get(0, 3), TypeParam(80));
+  EXPECT_EQ(t.Get(0, 4), TypeParam(81));
+  EXPECT_EQ(t.Get(1, 0), TypeParam(88));
+  EXPECT_EQ(t.Get(1, 1), TypeParam(89));
+  EXPECT_EQ(t.Get(1, 2), TypeParam(90));
+  EXPECT_EQ(t.Get(1, 3), TypeParam(91));
+  EXPECT_EQ(t.Get(1, 4), TypeParam(92));
+  EXPECT_EQ(t.Get(2, 0), TypeParam(99));
+  EXPECT_EQ(t.Get(2, 1), TypeParam(100));
+  EXPECT_EQ(t.Get(2, 2), TypeParam(101));
+  EXPECT_EQ(t.Get(2, 3), TypeParam(102));
+  EXPECT_EQ(t.Get(2, 4), TypeParam(103));
+}
+
+/*
+ * Should yield exactly the same results as non strided test
+ */
+TYPED_TEST(TensorIndexingTest, two_dimentional_tensor_with_stride_slicing_test)
+{
+  fetch::math::Tensor<TypeParam, 2> t({3, 5}, {2, 3});
+  for (std::uint64_t i(0); i < 3; ++i)
+    {
+      for (std::uint64_t j(0); j < 5; ++j)
+	{
+	  t.Set(i, j, TypeParam(i));
+	}
+    }
+  fetch::math::Tensor<TypeParam, 1> t0 = t.Slice(0);
+  fetch::math::Tensor<TypeParam, 1> t1 = t.Slice(1);
+  fetch::math::Tensor<TypeParam, 1> t2 = t.Slice(2);
+
+  std::array<std::uint64_t, 1> expectedSliceSize = {5ul};
+  EXPECT_EQ(t0.shape(), expectedSliceSize);
+  EXPECT_EQ(t1.shape(), expectedSliceSize);
+  EXPECT_EQ(t2.shape(), expectedSliceSize);
+  EXPECT_EQ(t.Storage().use_count(), 5);  // t, t0, t1, t2, temporary return
+  
+  for (std::uint64_t j(0); j < 5; ++j)
+  {
+    EXPECT_EQ(t0.Get(j), TypeParam(0));
+    t0.Set(j, TypeParam(77 + j));
+    EXPECT_EQ(t1.Get(j), TypeParam(1));
+    t1.Set(j, TypeParam(88 + j));
+    EXPECT_EQ(t2.Get(j), TypeParam(2));
+    t2.Set(j, TypeParam(99 + j));
+  }
+
+  EXPECT_EQ(t.Get(0, 0), TypeParam(77));
+  EXPECT_EQ(t.Get(0, 1), TypeParam(78));
+  EXPECT_EQ(t.Get(0, 2), TypeParam(79));
+  EXPECT_EQ(t.Get(0, 3), TypeParam(80));
+  EXPECT_EQ(t.Get(0, 4), TypeParam(81));
+  EXPECT_EQ(t.Get(1, 0), TypeParam(88));
+  EXPECT_EQ(t.Get(1, 1), TypeParam(89));
+  EXPECT_EQ(t.Get(1, 2), TypeParam(90));
+  EXPECT_EQ(t.Get(1, 3), TypeParam(91));
+  EXPECT_EQ(t.Get(1, 4), TypeParam(92));
+  EXPECT_EQ(t.Get(2, 0), TypeParam(99));
+  EXPECT_EQ(t.Get(2, 1), TypeParam(100));
+  EXPECT_EQ(t.Get(2, 2), TypeParam(101));
+  EXPECT_EQ(t.Get(2, 3), TypeParam(102));
+  EXPECT_EQ(t.Get(2, 4), TypeParam(103));
+}
+
+TYPED_TEST(TensorIndexingTest, three_dimentional_tensor_slicing_test)
+{
+  fetch::math::Tensor<TypeParam, 3> t({2, 3, 5});
+
+  ASSERT_EQ(t.DimensionSize(0), 24);
+  
+  TypeParam v(0);
+  for (std::uint64_t i(0); i < 2; ++i)
+  {
+    for (std::uint64_t j(0); j < 3; ++j)
+    {
+      for (std::uint64_t k(0); k < 5; ++k)
+      {
+        t.Set(i, j, k, v);
+        v += TypeParam(1);
+      }
+    }
+  }
+
+  fetch::math::Tensor<TypeParam, 2> t0 = t.Slice(0);
+  fetch::math::Tensor<TypeParam, 2> t1 = t.Slice(1);
+  std::array<std::uint64_t, 2> expectedSliceSize = {3ul, 5ul};
+  EXPECT_EQ(t0.shape(), expectedSliceSize);
+  EXPECT_EQ(t1.shape(), expectedSliceSize);
+  
+  for (std::uint64_t j(0); j < 3; ++j)
+  {
+    for (std::uint64_t k(0); k < 5; ++k)
+    {
+      EXPECT_EQ(t0.Get(j, k), TypeParam(j * 5 + k));
+      EXPECT_EQ(t1.Get(j, k), TypeParam(j * 5 + k + 15));
+    }
+  }
+}
+
+TYPED_TEST(TensorIndexingTest, double_slicing_test)
+{
+  fetch::math::Tensor<TypeParam, 3> t({2, 3, 5});
+
+  TypeParam v(0);
+  for (std::uint64_t i(0); i < 2; ++i)
+  {
+    for (std::uint64_t j(0); j < 3; ++j)
+    {
+      for (std::uint64_t k(0); k < 5; ++k)
+      {
+        t.Set(i, j, k, v);
+        v = v + TypeParam(1);
+      }
+    }
+  }
+
+  fetch::math::Tensor<TypeParam, 2> t1 = t.Slice(1);
+  std::array<std::uint64_t, 2> expectedSlice1Size = {3ul, 5ul};
+  EXPECT_EQ(t1.shape(), expectedSlice1Size);
+  fetch::math::Tensor<TypeParam, 1> t1_1 = t1.Slice(1);
+  std::array<std::uint64_t, 1> expectedSlice2Size = {5ul};
+  EXPECT_EQ(t1_1.shape(), expectedSlice2Size);
+
+  EXPECT_EQ(t1_1.Get(0), TypeParam(20));
+  EXPECT_EQ(t1_1.Get(1), TypeParam(21));
+  EXPECT_EQ(t1_1.Get(2), TypeParam(22));
+  EXPECT_EQ(t1_1.Get(3), TypeParam(23));
+  EXPECT_EQ(t1_1.Get(4), TypeParam(24));
+}
+
+TYPED_TEST(TensorIndexingTest, range_based_iteration_1d)
+{
+  fetch::math::Tensor<TypeParam, 1> t({5});
+  TypeParam                         i(0);
+  for (TypeParam &e : t)
+  {
+    e = i;
+    i += TypeParam(1);
+  }
+  for (std::uint64_t i(0); i < t.Size(); ++i)
+  {
+    EXPECT_EQ(t.Get(i), TypeParam(i));
+  }
+}
+
+TYPED_TEST(TensorIndexingTest, range_based_iteration_1d_with_stride)
+{
+  fetch::math::Tensor<TypeParam, 1> t({5}, {3});
+  TypeParam                         i(0);
+  for (TypeParam &e : t)
+    {
+      e = i;
+      i += TypeParam(1);
+    }
+  for (std::uint64_t i(0); i < 5; ++i)
+    {
+      EXPECT_EQ(t.Get(i), TypeParam(i));
+    }
+}
+
+TYPED_TEST(TensorIndexingTest, range_based_iteration_2d)
+{
+  fetch::math::Tensor<TypeParam, 2> t({5, 2});
+  TypeParam                         i(0);
+  for (TypeParam &e : t)
+  {
+    e = i;
+    i += TypeParam(1);
+  }
+  for (std::uint64_t i(0); i < 5; ++i)
+    {
+      for (std::uint64_t j(0); j < 2; ++j)
+	{
+	  EXPECT_EQ(t.Get(i, j), TypeParam(i * 2 + j));
+	}
+    }
+}
+
+TYPED_TEST(TensorIndexingTest, range_based_iteration_2d_with_stride)
+{
+  fetch::math::Tensor<TypeParam, 2> t({6, 3}, {3, 2});
+  TypeParam                         i(0);
+  for (TypeParam &e : t)
+  {
+    e = i;
+    i += TypeParam(1);
+  }
+  for (std::uint64_t i(0); i < 6; ++i)
+    {
+      for (std::uint64_t j(0); j < 3; ++j)
+	{
+	  EXPECT_EQ(t.Get(i, j), TypeParam(i * 3 + j));
+	}
+    }
+}
+
+TYPED_TEST(TensorIndexingTest, range_based_iteration_3d)
+{
+  fetch::math::Tensor<TypeParam, 3> t({5, 2, 4});
+  TypeParam                         i(0);
+  for (TypeParam &e : t)
+  {
+    e = i;
+    i += TypeParam(1);
+  }
+  for (std::uint64_t i(0); i < 5; ++i)
+    {
+      for (std::uint64_t j(0); j < 2; ++j)
+	{
+	  for (std::uint64_t k(0); k < 4; ++k)
+	    {
+	      EXPECT_EQ(t.Get(i, j, k), TypeParam(i * 8 + j * 4 + k));
+	    }
+	}
+    }
+}
+
+TYPED_TEST(TensorIndexingTest, range_based_iteration_3d_with_stride)
+{
+  fetch::math::Tensor<TypeParam, 3> t({5, 2, 4}, {3, 2, 1});
+  TypeParam                         i(0);
+  for (TypeParam &e : t)
+    {
+      e = i;
+      i += TypeParam(1);
+    }
+  for (std::uint64_t i(0); i < 5; ++i)
+    {
+      for (std::uint64_t j(0); j < 2; ++j)
+	{
+	  for (std::uint64_t k(0); k < 4; ++k)
+	    {
+	      EXPECT_EQ(t.Get(i, j, k), TypeParam(i * 8 + j * 4 + k));
+	    }
+	}
+    }
+}
+
+TYPED_TEST(TensorIndexingTest, range_based_iteration_4d)
+{
+  fetch::math::Tensor<TypeParam, 4> t({5, 2, 4, 6});
+  TypeParam                         i(0);
+
+  for (TypeParam &e : t)
+    {
+      e = i;
+      i += TypeParam(1);
+    }
+  
+    for (std::uint64_t i(0); i < 5; ++i)
+    {
+      for (std::uint64_t j(0); j < 2; ++j)
+	{
+	  for (std::uint64_t k(0); k < 4; ++k)
+	    {
+	      for (std::uint64_t l(0); l < 6; ++l)
+		{
+		  EXPECT_EQ(t.Get(i, j, k, l), TypeParam(i * 2 * 4 * 6 + j * 4 * 6 + k * 6 + l));
+		}
+	    }
+	}
+    }
+}
+
+TYPED_TEST(TensorIndexingTest, range_based_iteration_4d_with_stride)
+{
+  fetch::math::Tensor<TypeParam, 4> t({6, 3, 4, 6}, {3, 2, 2, 3});
+  TypeParam                         i(0);
+  for (TypeParam &e : t)
+  {
+    e = i;
+    i += TypeParam(1);
+  }
+
+  for (std::uint64_t i(0); i < 6; ++i)
+    {
+      for (std::uint64_t j(0); j < 3; ++j)
+	{
+	  for (std::uint64_t k(0); k < 4; ++k)
+	    {
+	      for (std::uint64_t l(0); l < 6; ++l)
+		{
+		  EXPECT_EQ(t.Get(i, j, k, l), TypeParam(i * 3 * 4 * 6 + j * 4 * 6 + k * 6 + l));
+		}
+	    }
+	}
+    }
+}

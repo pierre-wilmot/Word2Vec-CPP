@@ -15,7 +15,7 @@ using namespace fetch::ml;
 using namespace fetch::ml::ops;
 
 #define EMBEDDINGS_SIZE 100
-#define NB_EPOCH 2
+#define NB_EPOCH 10
 #define NEGATIVE_SAMPLES 25
 #define MINIMUM_WORD_FREQUENCY 5
 #define OUTPUT_FILE "vector.bin"
