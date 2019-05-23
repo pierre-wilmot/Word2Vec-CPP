@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/pierre-wilmot/Word2Vec-CPP.svg?branch=master)](https://travis-ci.org/pierre-wilmot/Word2Vec-CPP)
+
 # Word2Vec-CPP
 An implementation of Word2Vec in CPP.
 
