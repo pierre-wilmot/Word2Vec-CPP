@@ -92,6 +92,11 @@ public:
         if (cached_output_.shape() != output_shape)
         {
           cached_output_ = ArrayType(output_shape);
+	  cached_error_signal_.clear();
+	  for (auto const &i : inputs)
+	    {
+	      cached_error_signal_.emplace_back(i.get().shape());
+	    }
         }
       }
       if (batch_)
@@ -112,7 +117,7 @@ public:
       ArrayType const &errorSignal) 
   {
     std::vector<std::reference_wrapper<const ArrayType>> inputs = GatherInputs();
-    std::vector<ArrayType> back_propagated_error_signals = this->Backward(inputs, errorSignal);
+    std::vector<ArrayType> back_propagated_error_signals = this->Backward(inputs, errorSignal, cached_error_signal_);
     std::vector<std::pair<NodeInterface<T> *, ArrayType>> non_back_propagated_error_signals;
     assert(back_propagated_error_signals.size() == inputs.size() || inputs.empty());
 
@@ -168,6 +173,7 @@ private:
   std::string                                    name_;
 
   ArrayType                                      cached_output_;
+  std::vector<ArrayType>                         cached_error_signal_;
   CachedOutputState                              cached_output_status_;
   bool                                           batch_;
 };

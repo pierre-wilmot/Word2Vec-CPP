@@ -82,11 +82,12 @@ public:
 
   virtual std::vector<ArrayType> Backward(
       std::vector<std::reference_wrapper<ArrayType const>> const &inputs,
-      ArrayType const &                                           error_signal)
+      ArrayType const &                                           error_signal,
+      std::vector<ArrayType>                                     &output)
   {
-    assert(inputs.size() == 1);
+    assert(inputs.size() == 1 && output.size() == 1);
     assert(inputs.front().get().shape().size() == 2);
-
+    
     // Taking a slice of the output, this as the effect of turning a [1xDIM] matrix into a [DIM] vector (could have used Squeeze)
     // This is done for performance reasons as iterating over a vector is much faster than iterating over a matrix
     fetch::math::Tensor<float, 1> error_signal_slice = error_signal.Slice(0);
@@ -99,7 +100,7 @@ public:
 	this->gradient_accumulation_->Slice(typename ArrayType::SizeType(i)).InlineAdd(error_signal_slice);
       }
     }
-    return {error_signal};
+    return output;
   }
 
   virtual void Step(typename T::Type learningRate)

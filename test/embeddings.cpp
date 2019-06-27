@@ -104,7 +104,7 @@ TYPED_TEST(EmbeddingsTest, backward)
     errorSignal.Set(0, j, TypeParam(j + 0));
     errorSignal.Set(1, j, TypeParam(j + 6));
   }
-  e.Backward({input}, errorSignal);
+  e.fetch::ml::template Ops<ArrayType, 2>::Backward({input}, errorSignal);
   e.Step(TypeParam(1));  
 
   output = e.fetch::ml::template Ops<ArrayType, 2>::Forward({std::cref(input)});

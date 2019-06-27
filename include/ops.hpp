@@ -41,8 +41,18 @@ public:
     return Forward(inputs, output);
   }
 
+  virtual std::vector<ArrayType> Backward(std::vector<std::reference_wrapper<const ArrayType>> const &inputs, ArrayType const &errorSignal)
+  {
+    std::vector<ArrayType> output;
+    for (auto const &i : inputs)
+      {
+	output.emplace_back(i.get().shape());
+      }
+    return Backward(inputs, errorSignal, output);
+  }
+
   virtual ArrayType Forward(std::vector<std::reference_wrapper<ArrayType const>> const &inputs, ArrayType &output) = 0;
-  virtual std::vector<ArrayType> Backward(std::vector<std::reference_wrapper<const ArrayType>> const &inputs, ArrayType const &errorSignal) = 0;
+  virtual std::vector<ArrayType> Backward(std::vector<std::reference_wrapper<const ArrayType>> const &inputs, ArrayType const &errorSignal, std::vector<ArrayType> &output) = 0;
 
   virtual ArrayType ForwardBatch(std::vector<std::reference_wrapper<const ArrayType>> const &inputs) = 0;
   virtual std::vector<ArrayType> BackwardBatch(std::vector<std::reference_wrapper<const ArrayType>> const &inputs, ArrayType const & errorSignal) = 0;
@@ -79,7 +89,7 @@ public:
       std::vector<std::reference_wrapper<const ArrayType>> const &inputs,
       ArrayType const &                                           errorSignal)
   {
-    return this->Backward(inputs, errorSignal);
+    return {}; // this->Backward(inputs, errorSignal);
   }
 
   virtual std::array<SizeType, OUTPUT_RANK> ComputeOutputShape(
@@ -119,7 +129,7 @@ public:
       std::vector<std::reference_wrapper<const ArrayType>> const &inputs,
       ArrayType const &                                           errorSignal)
   {
-    return this->Backward(inputs, errorSignal);
+    return {}; // this->Backward(inputs, errorSignal);
     // assert(inputs.size() == 1);
     // assert(inputs.front().get().shape()[0] == errorSignal.shape()[0]);
     // std::vector<std::vector<ArrayType>> results;

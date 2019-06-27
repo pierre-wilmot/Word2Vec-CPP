@@ -49,20 +49,18 @@ public:
 
   std::vector<ArrayType> Backward(
       std::vector<std::reference_wrapper<const ArrayType>> const &inputs,
-      ArrayType const &                                           errorSignal)
+      ArrayType const &                                           errorSignal,
+      std::vector<ArrayType>                                     &output)
   {
-    assert(inputs.size() == 2);
+    assert(inputs.size() == 2 && output.size() == 2);
 
-    ArrayType errorSignal1(inputs.at(0).get().shape());
-    ArrayType errorSignal2(inputs.at(1).get().shape());
-
-    errorSignal1.Fill(0);
-    errorSignal2.Fill(0);
+    output[0].Fill(0);
+    output[1].Fill(0);
     
-    fetch::math::DotTranspose(errorSignal, inputs.at(1).get(), errorSignal1);
-    fetch::math::TransposeDot(inputs.at(0).get(), errorSignal, errorSignal2);
+    fetch::math::DotTranspose(errorSignal, inputs.at(1).get(), output[0]);
+    fetch::math::TransposeDot(inputs.at(0).get(), errorSignal, output[1]);
 
-    return {errorSignal1, errorSignal2};
+    return output;
   }
 
   std::array<SizeType, 2> ComputeOutputShape(
