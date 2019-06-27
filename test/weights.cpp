@@ -52,7 +52,7 @@ TYPED_TEST(WeightsTest, gradient_step_test)
   fetch::ml::ops::Weights<ArrayType, 2> w;
   w.SetData(data);
   ASSERT_EQ((w.fetch::ml::template Ops<ArrayType, 2>::Forward({})).Storage(), data.Storage());
-  std::vector<ArrayType> errorSignal = w.Backward({}, error);
+  std::vector<ArrayType> errorSignal = w.fetch::ml::template Ops<ArrayType, 2>::Backward({}, error);
   w.Step(TypeParam(1));
   ArrayType output = w.fetch::ml::template Ops<ArrayType, 2>::Forward({});
   ASSERT_EQ(output.Storage(), data.Storage());  

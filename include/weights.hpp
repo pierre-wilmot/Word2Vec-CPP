@@ -68,11 +68,12 @@ public:
 
   virtual std::vector<ArrayType> Backward(
       std::vector<std::reference_wrapper<ArrayType const>> const &inputs,
-      ArrayType const &                                           errorSignal)
+      ArrayType const &                                           errorSignal,
+      std::vector<ArrayType>                                     &output)
   {
-    assert(inputs.empty());
+    assert(inputs.empty() && output.empty());
     gradient_accumulation_->InlineAdd(errorSignal);
-    return {};
+    return output;
   }
 
   virtual bool SetData(ArrayType const &data)

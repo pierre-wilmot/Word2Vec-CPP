@@ -56,20 +56,20 @@ public:
 
   virtual std::vector<ArrayType> Backward(
       std::vector<std::reference_wrapper<const ArrayType>> const &inputs,
-      ArrayType const &                                           errorSignal)
+      ArrayType const &                                           errorSignal,
+      std::vector<ArrayType>                                     &output)
   {
-    assert(inputs.size() == 1);
+    assert(inputs.size() == 1 && output.size() == 1);
     assert(inputs.front().get().shape() == errorSignal.shape());
-    ArrayType returnSignal{errorSignal.shape()};
     ArrayType t{inputs.front().get().shape()};
 
     // gradient of sigmoid function is s(x)(1 - s(x))
     this->Forward(inputs, t);
-    returnSignal.Fill(1);
-    returnSignal.InlineSubtract(t);
-    returnSignal.InlineMultiply(t);
-    returnSignal.InlineMultiply(errorSignal);
-    return {returnSignal};
+    output[0].Fill(1);
+    output[0].InlineSubtract(t);
+    output[0].InlineMultiply(t);
+    output[0].InlineMultiply(errorSignal);
+    return output;
   }
 
   static constexpr char const *DESCRIPTOR = "Sigmoid";

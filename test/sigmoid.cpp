@@ -66,7 +66,7 @@ TYPED_TEST(SigmoidTest, backward_test)
     error.Set(0, i, TypeParam(errorInput[i]));
   }
   fetch::ml::ops::Sigmoid<ArrayType> op;
-  std::vector<ArrayType>             prediction = op.Backward({data}, error);
+  std::vector<ArrayType>             prediction = op.fetch::ml::template Ops<ArrayType, 2>::Backward({data}, error);
 
   // test correct values
   for (std::uint64_t i(0); i < 8; ++i)

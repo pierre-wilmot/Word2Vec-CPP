@@ -65,9 +65,10 @@ public:
 
   virtual std::vector<ArrayType> Backward(
       std::vector<std::reference_wrapper<ArrayType const>> const &inputs,
-      ArrayType const &                                           errorSignal)
+      ArrayType const &                                           errorSignal,
+      std::vector<ArrayType>                                     &output)
   {
-    assert(inputs.size() == 1);
+    assert(inputs.size() == 1 && output.size() == 1);
 
     uint64_t j(0);
     for (DataType const &i : inputs.front().get())
@@ -76,7 +77,7 @@ public:
       this->gradient_accumulation_->Slice(typename ArrayType::SizeType(double(i))).InlineAdd(errorSignal.Slice(j));
       j++;
     }
-    return {errorSignal};
+    return output;
   }
 
   virtual void Step(typename T::Type learningRate)

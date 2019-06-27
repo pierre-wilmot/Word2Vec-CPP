@@ -92,7 +92,7 @@ TYPED_TEST(MatrixMultiplyTest, backward_test)
 
   fetch::ml::ops::MatrixMultiply<TypeParam> op;
   std::vector<TypeParam>                    backpropagatedSignals =
-    op.Backward(std::vector<std::reference_wrapper<TypeParam const>>({a, b}), error);
+    op.fetch::ml::template Ops<TypeParam, 2>::Backward(std::vector<std::reference_wrapper<TypeParam const>>({a, b}), error);
 
   // test correct shapes
   ASSERT_EQ(backpropagatedSignals.size(), 2);
